@@ -3,9 +3,9 @@
 */
 #ifndef Queues
     // necessary includes
-    //#define Queues PROBABLY DON'T NEED THIS
     #include <stdio.h>
     #include <stdlib.h>
+    // time is used for seeding the random number generator
     #include <time.h>
 
     // structs

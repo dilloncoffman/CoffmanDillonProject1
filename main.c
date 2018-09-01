@@ -13,60 +13,13 @@
 #define DISK2_MIN 10
 #define DISK2_MAX 100
 
-// typedef struct Event { // better to use typedef to define Event struct for readability?
-// 	// members of the event type
-// 	struct eventNode *next; 
-// 	int time; // time is how priority is determined in EventQueue
-// 	int jobSequenceNumber; // how is this used in relation to time etc?
-// 	char *eventType; //is there a list of all event types possible?
-// } eventNode, *eventNodePtr; //variables of the Event type
-// // struct Event {
-// // 	int time;
-// // 	int jobSequenceNumber;
-// // 	char eventType;
-// // };
-
-// typedef struct Queue {
-// 	eventNodePtr front; // used to keep track of each queues elements 
-// 	eventNodePtr rear;
-// 	int currentSize;
-// 	// eventList - a list of strings of possible of events? How do we know all possible events?
-// 	int capacity; // how do we determine this? If sizeof(currentSize) > sizeof(capacity)?
-// } QType, *Queue; // Queue types to use & pointer to base Queue struct
-// PRIORITY QUEUE, priority determined by time
-// struct EventQueue {
-// 	int currentSize;
-// 	// eventList - a list of strings of possible events? Or something else?
-// 	int capacity; // what determines capacity?
-// };
-// NORMAL QUEUES
-// Would it be better to build out one queue struct, and then just be like struct Queue cpuQueue, disk1Queue, disk2Queue etc.?
-// struct cpuQueue {
-// };
-// struct disk1Queue {
-// };
-// struct disk2Queue {
-// };
-
-// // initializes a new empty Queue to use
-// Queue initQueue()
-// {
-//     Queue newQueue = malloc(sizeof(QType));
-//     newQueue->front = NULL;
-//     newQueue->rear = NULL;
-// 	newQueue->capacity = 0;
-// 	newQueue->currentSize = 0;
-// 	//newQueue->eventList = {"job arrived", " job terminated", "etc."};
-//     return newQueue;
-// }
-
 // MAIN
 int main() {
 	// read config file, how do we store the values in this file?
 	readAndWriteConfigFile();
 	printf("\n%d\n", generateRandomNumber(ARRIVE_MIN, ARRIVE_MAX));
 	Queue EventQueue = initializeQueue();
-	printf("\n%d\n", isEmpty(&EventQueue));
+	printf("\nIs the queue empty? %d\n", isEmpty(&EventQueue));
 	// Queue EventQueue = initQueue();
 	// destroy(EventQueue);
 
