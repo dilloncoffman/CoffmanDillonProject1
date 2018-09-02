@@ -1,29 +1,28 @@
 #include "Queues.h"
-// constants to be used
-#define SEED time(NULL)
-#define INIT_TIME 10000
-#define FIN_TIME 10
-#define ARRIVE_MIN 10
-#define ARRIVE_MAX 500
-#define QUIT_PROB 0.2
-#define CPU_MIN 10
-#define CPU_MAX 100
-#define DISK1_MIN 10
-#define DISK1_MAX 100
-#define DISK2_MIN 10
-#define DISK2_MAX 100
 
 // MAIN
 int main() {
 	// read config file, how do we store the values in this file?
 	readAndWriteConfigFile();
+	// test printing a randomly generated number
 	printf("\n%d\n", generateRandomNumber(ARRIVE_MIN, ARRIVE_MAX));
-	Queue EventQueue = initializeQueue();
-	printf("\nIs the queue empty? %d\n", isEmpty(&EventQueue));
-	// Queue EventQueue = initQueue();
-	// destroy(EventQueue);
+	// initialize the EventQueue
+	Queue EventQueue = initializeQueue(5);
+	Event newEventNode = create_event(1, 505, 10);
 
-	//printf("Is the current queue empty?: %d", isEmpty(EventQueue));
+	printf("\nSize of event queue = %d", EventQueue.currentSize);
+	printf("\nCapacity of event queue = %d", EventQueue.capacity);
+	printf("\nIs the queue empty? %d", isEmpty(&EventQueue));
+	printf("\nIs the queue full? %d\n", isFull(&EventQueue));
+	printf("size of event queue = %d", EventQueue.currentSize);
+	push(&EventQueue, newEventNode);
+	push(&EventQueue, create_event(2, 3, 101)); // create a random event to push to see if pop works
+	printQueue(EventQueue);
+	pop(&EventQueue); // pop the pushed on event
+	printQueue(EventQueue); // print the queue again to see the currentSize is back to 0
+	//destroy(&EventQueue); // not sure if destroy is freeing the memory it should
+	printf("\nIs the queue empty? %d", isEmpty(&EventQueue));
+	
 
 	return 0; // program was succesful, it ends
 }
