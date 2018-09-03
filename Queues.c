@@ -16,7 +16,7 @@ Queue initializeQueue(int capacity) {
 /*
  Prints the capacity, currentSize, and event times of the events present in the queue
  */
-void printQueueEventTimes(Queue q) {
+void printQueue(Queue q) {
 	printf("\n\nPRINTING THE QUEUE");
     if (q.eventList == NULL) {
         printf("No queue to print!\n");

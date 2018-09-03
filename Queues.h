@@ -43,7 +43,7 @@
     void readAndWriteConfigFile();
     int generateRandomNumber(int min, int max);
     Queue initializeQueue();
-    void printQueueEventTimes(Queue q);
+    void printQueue(Queue q);
     void destroy(Queue *q);
     void destroyEvent(Event *e);
     void sort(Queue *q);

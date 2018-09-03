@@ -23,7 +23,8 @@ int main() {
 	push(&EventQueue, create_event(2, 7, 544));
 	push(&EventQueue, create_event(2, 8, 32));
 	printf("\nSize of event queue = %d", EventQueue.currentSize);
-	printQueueEventTimes(EventQueue);
+	sort(&EventQueue);
+	printQueue(EventQueue);
 	pop(&EventQueue); // pop the pushed on event
 	printf("\nSize of event queue = %d", EventQueue.currentSize);
 	//printQueue(EventQueue); // print the queue again to see the currentSize is back to 0
