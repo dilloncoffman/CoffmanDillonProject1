@@ -7,8 +7,8 @@ int main() {
 	// test printing a randomly generated number
 	printf("\n%d\n", generateRandomNumber(ARRIVE_MIN, ARRIVE_MAX));
 	// initialize the EventQueue
-	Queue EventQueue = initializeQueue(5);
-	Event newEventNode = create_event(1, 505, 10);
+	Queue EventQueue = initializeQueue(9);
+	Event newEventNode = create_event(1, 1, 10);
 
 	printf("\nSize of event queue = %d", EventQueue.currentSize);
 	printf("\nCapacity of event queue = %d", EventQueue.capacity);
@@ -16,11 +16,22 @@ int main() {
 	printf("\nIs the queue full? %d\n", isFull(&EventQueue));
 	printf("size of event queue = %d", EventQueue.currentSize);
 	push(&EventQueue, newEventNode);
-	push(&EventQueue, create_event(2, 3, 101)); // create a random event to push to see if pop works
-	printQueue(EventQueue);
+	push(&EventQueue, create_event(2, 2, 20)); // create a random event to push to see if pop works
+	push(&EventQueue, create_event(2, 3, 45));
+	push(&EventQueue, create_event(2, 4, 30));
+	push(&EventQueue, create_event(2, 6, 4));
+	push(&EventQueue, create_event(2, 7, 544));
+	push(&EventQueue, create_event(2, 8, 32));
+	printf("\nSize of event queue = %d", EventQueue.currentSize);
+	printQueueEventTimes(EventQueue);
 	pop(&EventQueue); // pop the pushed on event
-	printQueue(EventQueue); // print the queue again to see the currentSize is back to 0
+	printf("\nSize of event queue = %d", EventQueue.currentSize);
+	//printQueue(EventQueue); // print the queue again to see the currentSize is back to 0
 	//destroy(&EventQueue); // not sure if destroy is freeing the memory it should
+	printf("\nIs the queue empty? %d", isEmpty(&EventQueue));
+	sort(&EventQueue);
+	printf("\n\n DESTROY THE QUEUE");
+	destroy(&EventQueue);
 	printf("\nIs the queue empty? %d", isEmpty(&EventQueue));
 	
 

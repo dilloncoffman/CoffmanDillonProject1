@@ -29,14 +29,13 @@
         int time; // time is how priority is determined in EventQueue
         int jobSequenceNumber; // how is this used in relation to time etc?
         int eventType; // an int because we'll want a switch case that prints the events type based off the number of event taking place
-        struct Event *event; // the event itself
+        //struct Event *event; // the event itself
     } Event; //variables of the Event type
 
     typedef struct {
         // Event *front; // used to keep track of each queues elements 
         // Event *rear;
         int rear, front, currentSize, capacity; // rear and front will keep track of rear and front indices
-
         Event *eventList; //list of events in queue (AKA an array of Event structs)
     } Queue; // Queue types to use & pointer to base Queue struct
 
@@ -44,8 +43,10 @@
     void readAndWriteConfigFile();
     int generateRandomNumber(int min, int max);
     Queue initializeQueue();
-    void printQueue(Queue q);
+    void printQueueEventTimes(Queue q);
     void destroy(Queue *q);
+    void destroyEvent(Event *e);
+    void sort(Queue *q);
     Event create_event(int eventType, int jobSequenceNumber, int time);
     int isEmpty(Queue *q);
     int isFull(Queue *q);
