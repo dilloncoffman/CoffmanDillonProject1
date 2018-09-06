@@ -4,32 +4,43 @@
  Creates, allocates memory for and returns a Queue
 */
 Queue initializeQueue(int capacity) {
-	Queue newQueue;
-	newQueue.capacity = capacity;
-	newQueue.currentSize = 0;
-	newQueue.front = 0; // points to first index in queue
-	newQueue.rear = capacity - 1;
-	newQueue.eventList = malloc(sizeof(Event) * newQueue.capacity);
-	return newQueue;
+	Queue newQ;
+	newQ.eventList = malloc(sizeof(Event) * newQ.capacity);
+	if(newQ.eventList == NULL) {
+		printf("Empty queue event list");
+	}
+	newQ.capacity = capacity;
+	newQ.currentSize = 0;
+	newQ.front = 0; // points to first index in queue
+	newQ.rear = capacity - 1; // points to most recent item in queue
+	return newQ;
 }
 
 /*
  Prints the capacity, currentSize, and event times of the events present in the queue
  */
-void printQueue(Queue q) {
+void printQueue(Queue *q) {
 	printf("\n\nPRINTING THE QUEUE");
-    if (q.eventList == NULL) {
+    if (q->eventList == NULL) {
         printf("No queue to print!\n");
         exit(2);
     }
     int i = 0;
-    printf("\ncapacity =  %d", q.capacity);
-    printf("\ncurrent size = %d", q.currentSize);
-    for (i = 0; i < q.currentSize; i++) {
+    printf("\ncapacity =  %d", q->capacity);
+    printf("\ncurrent size = %d", q->currentSize);
+    for (i = 0; i < q->currentSize; i++) {
 		// print event structs (the jobSequenceNumber)
-        printf("\nEvent %d has event type %d with a time of %d", q.eventList[i].jobSequenceNumber, q.eventList[i].eventType, q.eventList[i].time);
+		printEvent(q->eventList[i]);
     }
     printf("\n");
+}
+
+void printEvent(Event e) {
+	printf("\n\nPRINTING EVENT\n");
+	printf("\nEvent # %d", e.jobSequenceNumber);
+	printf("\nEvent type: %d", e.eventType);
+	printf("\nEvent time: %d", e.time);
+	printf("\n\n");
 }
 
 /*
@@ -47,11 +58,12 @@ void destroy(Queue *q) {
 }
 
 Event create_event(int eventType, int jobSequenceNumber, int ttime) {
-	Event newEvent;
-	newEvent.eventType = eventType; // 1 for job arrives at Event queue
-	newEvent.jobSequenceNumber = jobSequenceNumber; // it's the first job
-	newEvent.time = ttime; // the time randomly computed for entering the event queue
-	return newEvent;
+	Event *newEvent;
+	newEvent = (Event*) malloc(sizeof(Event));
+	newEvent->eventType = eventType; // 1 for job arrives at Event queue
+	newEvent->jobSequenceNumber = jobSequenceNumber; // it's the first job
+	newEvent->time = ttime; // the time randomly computed for entering the event queue
+	return *newEvent;
 }
 
 /*
@@ -114,19 +126,22 @@ void sort(Queue *q) {
     int i, swapped;
 	while(1) {
 		swapped = 0;
-		for (i = 0; i < (q->capacity - 1); i++) {
+		for (i = 0; i < (q->capacity-1); i++) {
+			// if the first event's time is less than the next event's time
 			if (q->eventList[i].time < q->eventList[i+1].time) {
+				// swap the events
 				Event temp = q->eventList[i];
 				q->eventList[i] = q->eventList[i+1];
 				q->eventList[i+1] = temp;
 				swapped = 1;
 			}
     	}
-
+		// if you've sorted all the events, swapped will remain 0 and break from loop
 		if (swapped == 0) {
 			break;
 		}
 	}
+	// printing sorted event times
 	printf("\n\nSorted list times?\n");
 	for(i=0; i < q->currentSize; i++) {
 		printf("%d ", q->eventList[i].time);
@@ -137,11 +152,14 @@ void sort(Queue *q) {
  Pops element from front of the queue and returns it
  */
 Event pop(Queue *q) {
-	if (isEmpty(q)) return create_event(0, 0, 0); // if the queue is empty, nothing to pop, return an empty event
+	if (isEmpty(q)) {
+		printf("\nQueue is empty, nothing to pop!");
+		exit(2);
+	} // if the queue is empty, nothing to pop, return an empty event
 	Event e = q->eventList[q->front];
 	q->front += 1;
 	q->currentSize -= 1; // decrement the size of the queue since you've popped off an item
-	printf("\nPopped from queue successfully.");
+	printf("\nPopped from queue successfully.\n");
 	return e;
 }
 
