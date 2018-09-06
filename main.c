@@ -15,17 +15,18 @@ int main() {
 	struct config configStruct;
 	configStruct = populateConfigStruct("config.txt");
 	/* Struct members */
-	printf("SEED from file: %f\n", configStruct.SEED);
-	printf("%f\n", configStruct.INIT_TIME);
-	printf("%f\n", configStruct.FIN_TIME);
-	printf("%f\n", configStruct.ARRIVE_MIN);
-	printf("%f\n", configStruct.ARRIVE_MAX);
-	printf("%f\n", configStruct.QUIT_PROB);
-	printf("%f\n", configStruct.CPU_MIN);
-	printf("%f\n", configStruct.CPU_MAX);
-	printf("%f\n", configStruct.DISK1_MIN);
-	printf("%f\n", configStruct.DISK1_MAX);
-	printf("%f\n", configStruct.DISK2_MIN);
+	printf("SEED: %.0f\n", configStruct.SEED);
+	printf("INIT_TIME: %.0f\n", configStruct.INIT_TIME);
+	printf("FIN_TIME: %.0f\n", configStruct.FIN_TIME);
+	printf("ARRIVE_MIN: %.0f\n", configStruct.ARRIVE_MIN);
+	printf("ARRIVE_MAX: %.0f\n", configStruct.ARRIVE_MAX);
+	printf("QUIT_PROB: %.1f\n", configStruct.QUIT_PROB);
+	printf("CPU_MIN: %.0f\n", configStruct.CPU_MIN);
+	printf("CPU_MAX: %.0f\n", configStruct.CPU_MAX);
+	printf("DISK1_MIN: %.0f\n", configStruct.DISK1_MIN);
+	printf("DISK1_MAX: %.0f\n", configStruct.DISK1_MAX);
+	printf("DISK2_MIN: %.0f\n", configStruct.DISK2_MIN);
+	printf("DISK2_MAX: %.0f\n", configStruct.DISK2_MAX);
 	// test printing a randomly generated number
 	//printf("\n%d\n", generateRandomNumber(ARRIVE_MIN, ARRIVE_MAX));
 	// initialize the EventQueue
@@ -136,11 +137,12 @@ int main() {
 
 
 /*
- * TESTING CONFIG STRUCT FUNCTIONS
+ * Populates config struct from config file, and writes config file to log file
  */
 struct config populateConfigStruct(char *configFile) {
 	struct config configStruct;
 	FILE *cFile_ptr = fopen(configFile, "r");
+ 	FILE *logFile_ptr = fopen("log.txt", "w");
 	char configFileContent[150];
 	char* token;
 	float result; // to store 
@@ -154,12 +156,14 @@ struct config populateConfigStruct(char *configFile) {
 	// read file, tokenizing parts of it and assigning members of struct to those values, then return that struct
 	while(!feof(cFile_ptr)){
 		if (fgets(configFileContent,150,cFile_ptr)) {
+			// write file contents to log file
+			fprintf(logFile_ptr, "%s", configFileContent);
 			// get "number" part of line for that value
 			token=strtok(configFileContent," ");
-			printf("Token: %s\n", token);
+			//printf("Token: %s\n", token);
 			// convert token to number (float in this case to account for QUIT_PROB)
 			sscanf(token, "%f", &result);
-			printf("Result = %.1f\n", result);
+			//printf("Result = %.1f\n", result);
 		}
 		// assign number result to proper struct member, i keeps track of what member value a given result for a line should be stored in
 	   	if (i == 0) {
@@ -198,16 +202,17 @@ struct config populateConfigStruct(char *configFile) {
 		else if (i == 11) {
 			configStruct.DISK2_MAX = result;
 		}
-			
+		// increment i to determine which configStruct member the next result should be stored in
 		i++;
-
  		//printf("%s", configFileContent);
 	}
-	printf("\n");
-	printf("\n");
-	printf("Size of configFileContent: %lu", sizeof(configFileContent));
-	printf("\n");
-	printf("Seed in function: %f\n\n", configStruct.SEED);
+	//printf("\n");
+	//printf("\n");
+	//printf("Size of configFileContent: %lu", sizeof(configFileContent));
+	//printf("\n");
+	//printf("Seed in function: %f\n\n", configStruct.SEED);
+	// close files
 	fclose(cFile_ptr);
+	fclose(logFile_ptr);
 	return configStruct;
 }
