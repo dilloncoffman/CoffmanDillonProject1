@@ -74,8 +74,11 @@ int main() {
 	// push(&EventQueue, create_event(2, 8, 32));
 	printf("\nSize of event queue AFTER PUSH = %d", EventQueue.currentSize);
 	printf("\nCapacity of event queue AFTER PUSH = %d", EventQueue.capacity);
+	printf("\n\nUNSORTED QUEUE:");
+	printQueue(EventQueue);
 	sort(&EventQueue);
 	pop(&EventQueue);
+	printf("\n\nSORTED QUEUE:");
 	printQueue(EventQueue);
 
 
