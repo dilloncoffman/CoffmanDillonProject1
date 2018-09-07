@@ -20,20 +20,21 @@ Queue initializeQueue(int capacity) {
  Prints the capacity, currentSize, and event times of the events present in the queue
  */
 void printQueue(Queue q) {
-	printf("\n\nPRINTING THE QUEUE");
-    if (q.eventList == NULL) {
-        printf("No queue to print!\n");
-        exit(2);
-    }
-    int i = 0;
-    printf("\ncapacity =  %d", q.capacity);
-    printf("\ncurrent size = %d", q.currentSize);
-	//printf("\nFirst events time: %d", q.eventList[i].time);
-    for (i = 0; i < q.currentSize; i++) {
-		// print event structs (the jobSequenceNumber)
-		printEvent(q.eventList[i]);
-    }
-    printf("\n");
+	// if the queue is empty, no queue to print, return to main function
+    if (isEmpty(&q)) {
+        printf("\nERROR: No queue to print!\n");
+    } else {
+		printf("\n\nPRINTING THE QUEUE");
+		int i = 0;
+		printf("\ncapacity =  %d", q.capacity);
+		printf("\ncurrent size = %d", q.currentSize);
+		//printf("\nFirst events time: %d", q.eventList[i].time);
+		for (i = 0; i < q.currentSize; i++) {
+			// print event structs (the jobSequenceNumber)
+			printEvent(q.eventList[i]);
+		}
+		printf("\n");
+	}
 }
 
 void printEvent(Event e) {
@@ -48,9 +49,8 @@ void printEvent(Event e) {
  Frees the memory allocated for the queue, and sets the members to 0
  */
 void destroy(Queue *q) {
-	if (q->eventList == NULL) {
-		printf("No queue to free!\n");
-		exit(1);
+	if (isEmpty(q)) {
+		printf("\nNo queue to free!\n");
 	}
 	//set currentSize and capacity to 0
     q->currentSize = 0;
@@ -109,97 +109,81 @@ void push(Queue *q, Event e) {
 	if (q->capacity == 0) {
 		q->capacity = INIT_SIZE;
 	}
-	int i = 0;
+		int i = 0;
 	// if the queue is full, dynamically allocate more memory for it by 
 	if (isFull(q)) {
-		printf("\nReallocating space!\n");
+		printf("\nQueue's capcity to be reallocated: %d", q->capacity);
+		printf("\n REALLOCATING \n");
 		q->capacity *= 2;
-		Queue tempQ1;
-		tempQ1.eventList = (Event*) malloc(sizeof(Event) * q->capacity);
-		if(tempQ1.eventList == NULL) {
-			printf("Empty queue event list");
-		}
-    
-        for (i = 0; i < q->capacity; i++) {
-            tempQ1.eventList[i] = q->eventList[i]; //put dbl to be inserted into reallocated array, should copy over already allocated values
+		printf("Queue's capcity AFTER reallocation: %d\n", q->capacity);
+        Event *temp = (Event *)malloc(sizeof(Event) * q->capacity); //reallocate double the space
+        if (temp == NULL) {
+            printf("Error reallocating!\n");
+            exit(1); //error reallocating vector
         }
-		Queue tempQ2;
-    	tempQ2.eventList = q->eventList; //temp copy address into other pointer
-        q->eventList = tempQ1.eventList;
-        free(tempQ2.eventList); //free old vector;
-	} else { // queue is not full, push event to queue
-	printf("\n\nDID IT");
-
-		q->eventList[q->currentSize] = e;
-		printf("\nPushed events time: %d", q->eventList[q->currentSize].time);
-		printf("\nPushed events type: %d", q->eventList[q->currentSize].eventType);
-		printf("\nPushed events job#: %d", q->eventList[q->currentSize].jobSequenceNumber);
-		q->currentSize += 1; // increment size of queue by 1, since event successfully pushed to queue
-		printf("\nPushed event to queue successfully.\n");
-	}
+        for (i = 0; i < (q->capacity)-i; i++) {
+            temp[i] = q->eventList[i]; //put dbl to be inserted into reallocated array, should copy over already allocated values
+        }
+        Event *temp2 = q->eventList; //temp copy address into other pointer
+        q->eventList = temp;
+        free(temp2); //free old vector;
+	}  // queue is not full, push event to queue
+	printf("\nDID IT\n");
+	q->eventList[q->currentSize] = e;
+	q->currentSize += 1; // increment size of queue by 1, since event successfully pushed to queue
+	printf("Pushed event to queue successfully.\n");
 }
 
-// /*
-//  Swaps two events in a queue.
-//  */
-// void swap(Queue *q, Event i, Event j) {
-// 	// if the eventList is NULL, print an error message and exit
-//     if (q->eventList == NULL) {
-//         printf("No queue to perform a swap on!\n");
-//         exit(2);
-//     }
-//     Event temp;
-//     temp = q->eventList[i];
-//     q->eventList[i] = q->eventList[j];
-//     q->eventList[j] = temp;
-// }
-
 /*
- Sorts a queue (the priority queue)'s events by time
+ Sorts a queue (the priority queue)'s events by time and returns that newly sorted queue
  */
-void sort(Queue *q) {
-    if (q->eventList == NULL) {
-        printf("No queue of events to perform a sort on!\n");
-        exit(2);
-    }
-    int i, swapped;
-	while(1) {
-		swapped = 0;
-		for (i = 0; i < (q->capacity-1); i++) {
-			// if the first event's time is less than the next event's time
-			if (q->eventList[i].time < q->eventList[i+1].time) {
-				// swap the events
-				Event temp = q->eventList[i];
-				q->eventList[i] = q->eventList[i+1];
-				q->eventList[i+1] = temp;
-				swapped = 1;
+Queue sort(Queue *q) {
+    if (isEmpty(q)) {
+        printf("\n\nNo queue of events to perform a sort on!\n");
+    } else {
+		int i, swapped;
+		while(1) {
+			swapped = 0;
+			for (i = 0; i < (q->capacity-1); i++) {
+				// if the first event's time is less than the next event's time
+				if (q->eventList[i].time < q->eventList[i+1].time) {
+					// swap the events
+					Event temp = q->eventList[i];
+					q->eventList[i] = q->eventList[i+1];
+					q->eventList[i+1] = temp;
+					swapped = 1;
+				}
 			}
-    	}
-		// if you've sorted all the events, swapped will remain 0 and break from loop
-		if (swapped == 0) {
-			break;
+			// if you've sorted all the events, swapped will remain 0 and break from loop
+			if (swapped == 0) {
+				break;
+			}
 		}
+		// printing sorted event times
+		printf("\n\nSorted list times?\n");
+		for(i=0; i < q->currentSize; i++) {
+			printf("%d ", q->eventList[i].time);
+		}
+		return *q;
 	}
-	// printing sorted event times
-	printf("\n\nSorted list times?\n");
-	for(i=0; i < q->currentSize; i++) {
-		printf("%d ", q->eventList[i].time);
-	}
+	return *q;
 }
 
 /*
  Pops element from front of the queue and returns it
  */
 Event pop(Queue *q) {
+	// if the queue is empty, nothing to pop, exit (not sure if we'd want to exit or return an empty event)
 	if (isEmpty(q)) {
 		printf("\nQueue is empty, nothing to pop!");
-		exit(2);
-	} // if the queue is empty, nothing to pop, return an empty event
-	Event e = q->eventList[q->front];
-	q->front += 1;
-	q->currentSize -= 1; // decrement the size of the queue since you've popped off an item
-	printf("\nPopped from queue successfully.\n");
-	return e;
+		exit(1);
+	} else {
+		Event e = q->eventList[q->front];
+		q->front += 1;
+		q->currentSize -= 1; // decrement the size of the queue since you've popped off an item
+		printf("\nPopped from queue successfully.\n");
+		return e;
+	}
 }
 
 // int push(Queue *q, Event *e) {

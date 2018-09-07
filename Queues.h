@@ -47,12 +47,13 @@
     // DES function protoypes
     struct config populateConfigStruct(char *file);
     int generateRandomNumber(struct config cfg, int min, int max);
-    Queue initializeQueue();
+    Queue initializeQueue(int capacity);
+    //reallocateQueue(Queue *q, int capacity);
     void printQueue(Queue q);
     void printEvent(Event e);
     void destroy(Queue *q);
     void destroyEvent(Event *e);
-    void sort(Queue *q);
+    Queue sort(Queue *q);
     Event create_event(int eventType, int jobSequenceNumber, int time);
     int isEmpty(Queue *q);
     int isFull(Queue *q);
