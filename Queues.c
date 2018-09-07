@@ -5,7 +5,7 @@
 */
 Queue initializeQueue(int capacity) {
 	Queue newQ;
-	newQ.eventList = malloc(sizeof(Event) * newQ.capacity);
+	newQ.eventList = (Event*) malloc(sizeof(Event) * capacity);
 	if(newQ.eventList == NULL) {
 		printf("Empty queue event list");
 	}
@@ -19,18 +19,19 @@ Queue initializeQueue(int capacity) {
 /*
  Prints the capacity, currentSize, and event times of the events present in the queue
  */
-void printQueue(Queue *q) {
+void printQueue(Queue q) {
 	printf("\n\nPRINTING THE QUEUE");
-    if (q->eventList == NULL) {
+    if (q.eventList == NULL) {
         printf("No queue to print!\n");
         exit(2);
     }
     int i = 0;
-    printf("\ncapacity =  %d", q->capacity);
-    printf("\ncurrent size = %d", q->currentSize);
-    for (i = 0; i < q->currentSize; i++) {
+    printf("\ncapacity =  %d", q.capacity);
+    printf("\ncurrent size = %d", q.currentSize);
+	//printf("\nFirst events time: %d", q.eventList[i].time);
+    for (i = 0; i < q.currentSize; i++) {
 		// print event structs (the jobSequenceNumber)
-		printEvent(q->eventList[i]);
+		printEvent(q.eventList[i]);
     }
     printf("\n");
 }
@@ -84,19 +85,57 @@ int isFull(Queue *q) {
 	return q->currentSize == q->capacity;
 }
 
+// /*
+//  Pushes new event onto queue
+//  */
+// void push(Queue *q, Event e) {
+// 	// if the queue is full, return
+// 	if (isFull(q)) {
+// 		printf("\nQueue is full!\n");
+// 		return;
+// 	} else { // queue is not full, push event to queue
+// 		q->rear += 1;
+// 		q->eventList[q->rear] = e;
+// 		q->currentSize += 1; // increment size of queue by 1, since event successfully pushed to queue
+// 		printf("\nPushed event to queue successfully.");
+// 	}
+// }
+
 /*
  Pushes new event onto queue
  */
 void push(Queue *q, Event e) {
-	// if the queue is full, return
+	// if q's capacity is 0, set it to INIT_SIZE
+	if (q->capacity == 0) {
+		q->capacity = INIT_SIZE;
+	}
+	int i = 0;
+	// if the queue is full, dynamically allocate more memory for it by 
 	if (isFull(q)) {
-		printf("\nQueue is full!\n");
-		return;
+		printf("\nReallocating space!\n");
+		q->capacity *= 2;
+		Queue tempQ1;
+		tempQ1.eventList = (Event*) malloc(sizeof(Event) * q->capacity);
+		if(tempQ1.eventList == NULL) {
+			printf("Empty queue event list");
+		}
+    
+        for (i = 0; i < q->capacity; i++) {
+            tempQ1.eventList[i] = q->eventList[i]; //put dbl to be inserted into reallocated array, should copy over already allocated values
+        }
+		Queue tempQ2;
+    	tempQ2.eventList = q->eventList; //temp copy address into other pointer
+        q->eventList = tempQ1.eventList;
+        free(tempQ2.eventList); //free old vector;
 	} else { // queue is not full, push event to queue
-		q->rear += 1;
-		q->eventList[q->rear] = e;
+	printf("\n\nDID IT");
+
+		q->eventList[q->currentSize] = e;
+		printf("\nPushed events time: %d", q->eventList[q->currentSize].time);
+		printf("\nPushed events type: %d", q->eventList[q->currentSize].eventType);
+		printf("\nPushed events job#: %d", q->eventList[q->currentSize].jobSequenceNumber);
 		q->currentSize += 1; // increment size of queue by 1, since event successfully pushed to queue
-		printf("\nPushed event to queue successfully.");
+		printf("\nPushed event to queue successfully.\n");
 	}
 }
 

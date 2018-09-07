@@ -1,5 +1,6 @@
 #include "Queues.h"
 
+#define INIT_SIZE 4 // for dynamically allocating queues
 /**
  * Problems:
  * 1.) Config file read in at runtime and values set, how should that look?
@@ -28,13 +29,27 @@ int main() {
 	printf("DISK2_MIN: %.0f\n", configStruct.DISK2_MIN);
 	printf("DISK2_MAX: %.0f\n", configStruct.DISK2_MAX);
 	// test printing a randomly generated number
-	//printf("\n%d\n", generateRandomNumber(ARRIVE_MIN, ARRIVE_MAX));
+	// EVERY TIME YOU GENERATE A RANDOM NUMBER, SET THE SEED AS THE NEW RANDOM NUMBER
+	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	printf("\nconfig seed: %f\n", configStruct.SEED);
+	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	printf("config seed: %f\n", configStruct.SEED);
+	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	printf("config seed: %f\n", configStruct.SEED);
+	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	printf("config seed: %f\n", configStruct.SEED);
+	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	printf("config seed: %f\n", configStruct.SEED);
+	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	printf("config seed: %f\n", configStruct.SEED);
 	// initialize the EventQueue
-	Queue EventQueue = initializeQueue(9);
+	Queue EventQueue = initializeQueue(2);
 	Event newEventNode = create_event(1, 1, 10);
 	printEvent(newEventNode);
-	Event newerEventNode = create_event(2, 3, 10);
+	Event newerEventNode = create_event(2, 3, 15);
 	printEvent(newerEventNode);
+	Event newererEventNode = create_event(4, 7, 25);
+	printEvent(newererEventNode);
 
 	printf("\nSize of event queue = %d", EventQueue.currentSize);
 	printf("\nCapacity of event queue = %d", EventQueue.capacity);
@@ -43,6 +58,7 @@ int main() {
 	printf("size of event queue = %d", EventQueue.currentSize);
 	push(&EventQueue, newEventNode);
 	push(&EventQueue, newerEventNode);
+	push(&EventQueue, newererEventNode);
 	//push(&EventQueue, create_event(2, 2, 20)); // create a random event to push to see if pop works
 	//push(&EventQueue, create_event(2, 3, 45));
 	// push(&EventQueue, create_event(2, 4, 30));
@@ -51,7 +67,7 @@ int main() {
 	// push(&EventQueue, create_event(2, 8, 32));
 	printf("\nSize of event queue = %d", EventQueue.currentSize);
 	sort(&EventQueue);
-	printQueue(&EventQueue);
+	printQueue(EventQueue);
 	pop(&EventQueue); // pop the pushed on event
 	printf("\nSize of event queue = %d", EventQueue.currentSize);
 	//printQueue(EventQueue); // print the queue again to see the currentSize is back to 0
@@ -121,11 +137,12 @@ int main() {
 // 	fclose(ptr_logFile);
 // }
 
-// // generates a random number between min and max values passed in
-// int generateRandomNumber(int min, int max) {
-// 	srand(SEED);
-// 	return (rand() % (max-min + 1)) + min;
-// }
+// generates a random number between min and max values passed in
+int generateRandomNumber(struct config cfg, int min, int max) {
+	srand(cfg.SEED);
+	int randomNumber = (rand() % (max-min + 1)) + min;
+	return randomNumber;
+}
 
 
 
