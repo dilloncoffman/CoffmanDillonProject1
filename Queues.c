@@ -145,7 +145,7 @@ Queue sort(Queue *q) {
 		int i, swapped;
 		while(1) {
 			swapped = 0;
-			for (i = 0; i < q->capacity - 2; i++) {
+			for (i = 0; i <= q->capacity - 3; i++) {
 				// if the first event's time is less than the next event's time
 				if (q->eventList[i].time < q->eventList[i+1].time) {
 					// swap the events

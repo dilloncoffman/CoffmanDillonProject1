@@ -56,7 +56,8 @@ int main() {
 	// event type of 9 is SIM_END, 1 is arrival //Event create_event(int eventType, int jobSequenceNumber, double ttime)
 	push(&EventQueue, create_event(9, 0, configStruct.FIN_TIME));
 	push(&EventQueue, create_event(1, 1, configStruct.INIT_TIME));
-	push(&EventQueue, create_event(5, 2, 25));
+	push(&EventQueue, create_event(5, 2, 234));
+	
 	
 	sort(&EventQueue); // ---- CHECK OUT SORT WHY ISN'T IT WORKING?
 	printQueue(EventQueue);
