@@ -58,12 +58,12 @@ void destroy(Queue *q) {
     free(q->eventList); //free queue
 }
 
-Event create_event(int eventType, int jobSequenceNumber, int ttime) {
+Event create_event(int eventType, int jobSequenceNumber, int time) {
 	Event *newEvent;
 	newEvent = (Event*) malloc(sizeof(Event));
 	newEvent->eventType = eventType; // 1 for job arrives at Event queue
 	newEvent->jobSequenceNumber = jobSequenceNumber; // it's the first job
-	newEvent->time = ttime; // the time randomly computed for entering the event queue
+	newEvent->time = time; // the time randomly computed for entering the event queue
 	return *newEvent;
 }
 
@@ -112,10 +112,10 @@ void push(Queue *q, Event e) {
 		int i = 0;
 	// if the queue is full, dynamically allocate more memory for it by 
 	if (isFull(q)) {
-		printf("\nQueue's capcity to be reallocated: %d", q->capacity);
+		printf("\nQueue's capacity to be reallocated: %d", q->capacity);
 		printf("\n REALLOCATING \n");
 		q->capacity *= 2;
-		printf("Queue's capcity AFTER reallocation: %d\n", q->capacity);
+		printf("Queue's capacity AFTER reallocation: %d\n", q->capacity);
         Event *temp = (Event *)malloc(sizeof(Event) * q->capacity); //reallocate double the space
         if (temp == NULL) {
             printf("Error reallocating!\n");
@@ -131,6 +131,7 @@ void push(Queue *q, Event e) {
 	printf("\nDID IT\n");
 	q->eventList[q->currentSize] = e;
 	q->currentSize += 1; // increment size of queue by 1, since event successfully pushed to queue
+	q->front += 1; // increment the counter which keeps track of what is at the front of the queue
 	printf("Pushed event to queue successfully.\n");
 }
 
@@ -144,7 +145,7 @@ Queue sort(Queue *q) {
 		int i, swapped;
 		while(1) {
 			swapped = 0;
-			for (i = 0; i < (q->capacity-1); i++) {
+			for (i = 0; i < q->capacity - 1; i++) {
 				// if the first event's time is less than the next event's time
 				if (q->eventList[i].time < q->eventList[i+1].time) {
 					// swap the events
@@ -178,8 +179,8 @@ Event pop(Queue *q) {
 		printf("\nQueue is empty, nothing to pop!");
 		exit(1);
 	} else {
-		Event e = q->eventList[q->front];
-		q->front += 1;
+		Event e = q->eventList[(q->front - 1)];
+		q->front -= 1; // decrement front index to keep track of front of queue
 		q->currentSize -= 1; // decrement the size of the queue since you've popped off an item
 		printf("\nPopped from queue successfully.\n");
 		return e;

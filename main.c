@@ -1,6 +1,4 @@
 #include "Queues.h"
-
-#define INIT_SIZE 4 // for dynamically allocating queues
 /**
  * Problems:
  * 1.) Config file read in at runtime and values set, how should that look?
@@ -15,6 +13,8 @@ int main() {
 	//readAndWriteConfigFile();
 	struct config configStruct;
 	configStruct = populateConfigStruct("config.txt");
+
+
 	/* Struct members */
 	printf("SEED: %.0f\n", configStruct.SEED);
 	printf("INIT_TIME: %.0f\n", configStruct.INIT_TIME);
@@ -28,6 +28,8 @@ int main() {
 	printf("DISK1_MAX: %.0f\n", configStruct.DISK1_MAX);
 	printf("DISK2_MIN: %.0f\n", configStruct.DISK2_MIN);
 	printf("DISK2_MAX: %.0f\n", configStruct.DISK2_MAX);
+
+
 	// test printing a randomly generated number
 	// EVERY TIME YOU GENERATE A RANDOM NUMBER, SET THE SEED AS THE NEW RANDOM NUMBER
 	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
@@ -42,22 +44,17 @@ int main() {
 	printf("config seed: %f\n", configStruct.SEED);
 	configStruct.SEED = generateRandomNumber( configStruct,configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
 	printf("config seed: %f\n", configStruct.SEED);
-	// initialize the EventQueue
-	Queue EventQueue = initializeQueue(3);
-	// Event newEventNode = create_event(1, 1, 10);
-	// printEvent(newEventNode);
-	// Event newerEventNode = create_event(2, 3, 15);
-	// printEvent(newerEventNode);
-	// Event newererEventNode = create_event(4, 7, 25);
-	// printEvent(newererEventNode);
-	// Event newestNode =  create_event(3, 9, 3);
 
+
+	// initialize the EventQueue
+	Queue EventQueue = initializeQueue(0);
 	printf("\nSize of event queue AT START = %d", EventQueue.currentSize);
 	printf("\nCapacity of event queue AT START = %d", EventQueue.capacity);
 	printf("\nIs the queue empty AT START? %d", isEmpty(&EventQueue));
 	printf("\nIs the queue full AT START? %d\n", isFull(&EventQueue));
 
 
+	// Push some events to test into EventQ: Event create_event(int eventType, int jobSequenceNumber, int ttime)
 	push(&EventQueue, create_event(1, 1, 1));
 	push(&EventQueue, create_event(5, 5, 5));
 	push(&EventQueue,  create_event(2, 2, 2));
@@ -66,35 +63,26 @@ int main() {
 	push(&EventQueue, create_event(4, 4, 4));
 	push(&EventQueue, create_event(6, 6, 6));
 	
-	//push(&EventQueue, create_event(2, 2, 20)); // create a random event to push to see if pop works
-	//push(&EventQueue, create_event(2, 3, 45));
-	// push(&EventQueue, create_event(2, 4, 30));
-	// push(&EventQueue, create_event(2, 6, 4));
-	// push(&EventQueue, create_event(2, 7, 544));
-	// push(&EventQueue, create_event(2, 8, 32));
+
 	printf("\nSize of event queue AFTER PUSH = %d", EventQueue.currentSize);
 	printf("\nCapacity of event queue AFTER PUSH = %d", EventQueue.capacity);
 	printf("\n\nUNSORTED QUEUE:");
 	printQueue(EventQueue);
 	sort(&EventQueue);
-	pop(&EventQueue);
+	Event previouslyPopped = pop(&EventQueue);
+	printf("JOB # POPPED: %d", previouslyPopped.jobSequenceNumber);
+	Event nextPopped = pop(&EventQueue);
+	printf("JOB # POPPED: %d", nextPopped.jobSequenceNumber);
+	Event nextnextPopped = pop(&EventQueue);
+	printf("JOB # POPPED: %d", nextnextPopped.jobSequenceNumber);
 	printf("\n\nSORTED QUEUE:");
 	printQueue(EventQueue);
 
 
-	pop(&EventQueue);
-	pop(&EventQueue);
-	pop(&EventQueue);
-	pop(&EventQueue);
-	pop(&EventQueue);
-	push(&EventQueue, create_event(8, 8, 8));
-
 	printf("\nSize of event queue AFTER POP = %d", EventQueue.currentSize);
-	//printQueue(EventQueue); // print the queue again to see the currentSize is back to 0
-	//destroy(&EventQueue); // not sure if destroy is freeing the memory it should
 	printf("\nIs the queue empty AFTER POP? %d", isEmpty(&EventQueue));
-	sort(&EventQueue);
-	//printQueue(EventQueue);
+	// sort(&EventQueue);
+	// printQueue(EventQueue);
 	printf("\n\nDESTROY THE QUEUE\n");
 	destroy(&EventQueue);
 	printf("Is the queue empty AFTER DESTROY? %d", isEmpty(&EventQueue));
@@ -160,9 +148,9 @@ int main() {
 // }
 
 // generates a random number between min and max values passed in
-int generateRandomNumber(struct config cfg, int min, int max) {
+double generateRandomNumber(struct config cfg, int min, int max) {
 	srand(cfg.SEED);
-	int randomNumber = (rand() % (max-min + 1)) + min;
+	double randomNumber = (rand() % (max-min + 1)) + min;
 	return randomNumber;
 }
 

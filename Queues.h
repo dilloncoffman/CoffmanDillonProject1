@@ -25,7 +25,6 @@
         DISK1_MAX,
         DISK2_MIN,
         DISK2_MAX;
-        int rand;
     };
     // define an Event type as a struct with certain data to be used
     typedef struct { // better to use typedef to define Event struct for readability?
@@ -46,7 +45,7 @@
 
     // DES function protoypes
     struct config populateConfigStruct(char *file);
-    int generateRandomNumber(struct config cfg, int min, int max);
+    double generateRandomNumber(struct config cfg, int min, int max);
     Queue initializeQueue(int capacity);
     //reallocateQueue(Queue *q, int capacity);
     void printQueue(Queue q);
