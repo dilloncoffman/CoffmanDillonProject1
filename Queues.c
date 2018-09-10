@@ -41,7 +41,7 @@ void printEvent(Event e) {
 	printf("\n\nPRINTING EVENT\n");
 	printf("\nEvent # %d", e.jobSequenceNumber);
 	printf("\nEvent type: %d", e.eventType);
-	printf("\nEvent time: %d", e.time);
+	printf("\nEvent time: %.0f", e.time);
 	printf("\n\n");
 }
 
@@ -58,12 +58,12 @@ void destroy(Queue *q) {
     free(q->eventList); //free queue
 }
 
-Event create_event(int eventType, int jobSequenceNumber, int time) {
+Event create_event(int eventType, int jobSequenceNumber, double ttime) {
 	Event *newEvent;
 	newEvent = (Event*) malloc(sizeof(Event));
 	newEvent->eventType = eventType; // 1 for job arrives at Event queue
 	newEvent->jobSequenceNumber = jobSequenceNumber; // it's the first job
-	newEvent->time = time; // the time randomly computed for entering the event queue
+	newEvent->time = ttime; // the time randomly computed for entering the event queue
 	return *newEvent;
 }
 
@@ -145,7 +145,7 @@ Queue sort(Queue *q) {
 		int i, swapped;
 		while(1) {
 			swapped = 0;
-			for (i = 0; i < q->capacity - 1; i++) {
+			for (i = 0; i < q->capacity - 2; i++) {
 				// if the first event's time is less than the next event's time
 				if (q->eventList[i].time < q->eventList[i+1].time) {
 					// swap the events
@@ -163,7 +163,7 @@ Queue sort(Queue *q) {
 		// printing sorted event times
 		printf("\n\nSorted list times?\n");
 		for(i=0; i < q->currentSize; i++) {
-			printf("%d ", q->eventList[i].time);
+			printf("%.0f ", q->eventList[i].time);
 		}
 		return *q;
 	}

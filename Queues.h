@@ -13,7 +13,7 @@
     // ************ STRUCTS  *************
     // define all config file values into a struct config
     struct config {
-        float SEED,
+        double SEED,
         INIT_TIME,
         FIN_TIME,
         ARRIVE_MIN,
@@ -30,7 +30,7 @@
     typedef struct { // better to use typedef to define Event struct for readability?
         // members of the event type
         // struct Event *next;
-        int time; // time is how priority is determined in EventQueue
+        double time; // time is how priority is determined in EventQueue
         int jobSequenceNumber; // how is this used in relation to time etc?
         int eventType; // an int because we'll want a switch case that prints the events type based off the number of event taking place
         //struct Event *event; // the event itself
@@ -53,7 +53,7 @@
     void destroy(Queue *q);
     void destroyEvent(Event *e);
     Queue sort(Queue *q);
-    Event create_event(int eventType, int jobSequenceNumber, int time);
+    Event create_event(int eventType, int jobSequenceNumber, double ttime);
     int isEmpty(Queue *q);
     int isFull(Queue *q);
     void push(Queue *q, Event e);

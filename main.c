@@ -53,40 +53,67 @@ int main() {
 	printf("\nIs the queue empty AT START? %d", isEmpty(&EventQueue));
 	printf("\nIs the queue full AT START? %d\n", isFull(&EventQueue));
 
+	// event type of 9 is SIM_END, 1 is arrival //Event create_event(int eventType, int jobSequenceNumber, double ttime)
+	push(&EventQueue, create_event(9, 0, configStruct.FIN_TIME));
+	push(&EventQueue, create_event(1, 1, configStruct.INIT_TIME));
+	push(&EventQueue, create_event(5, 2, 25));
+	
+	sort(&EventQueue); // ---- CHECK OUT SORT WHY ISN'T IT WORKING?
+	printQueue(EventQueue);
 
-	// Push some events to test into EventQ: Event create_event(int eventType, int jobSequenceNumber, int ttime)
-	push(&EventQueue, create_event(1, 1, 1));
-	push(&EventQueue, create_event(5, 5, 5));
-	push(&EventQueue,  create_event(2, 2, 2));
-	push(&EventQueue, create_event(3, 3, 3));
-	push(&EventQueue, create_event(7, 7, 7));
-	push(&EventQueue, create_event(4, 4, 4));
-	push(&EventQueue, create_event(6, 6, 6));
+
+	double currentTime = configStruct.INIT_TIME;
+	Event currentJob = pop(&EventQueue);
+	currentTime += currentJob.time;
+	printf("Time check: %.0f", currentTime);
+
+	// While the EventQueue is not empty AND the currentTime is less than FIN_TIME, process events
+	// while(!(isEmpty(&EventQueue)) && (currentTime < configStruct.FIN_TIME)) {
+	// 	Event currentJob = pop(&EventQueue);
+	// 	currentTime = currentJob.time;
+	// 	switch(currentJob.eventType) {
+	// 		case 1: // arrival
+				
+	// 			break;
+	// 		case 2: // finished
+	// 			break;
+
+	// 		case 9: 
+	// 			exit(1); // SIM_END
+	// 	}
+
+	// }
+
+
+	// // Push some events to test into EventQ: Event create_event(int eventType, int jobSequenceNumber, int ttime)
+	// push(&EventQueue, create_event(1, 1, 1));
+	// push(&EventQueue, create_event(5, 5, 5));
+	// push(&EventQueue,  create_event(2, 2, 2));
+	// push(&EventQueue, create_event(3, 3, 3));
+	// push(&EventQueue, create_event(7, 7, 7));
+	// push(&EventQueue, create_event(4, 4, 4));
+	// push(&EventQueue, create_event(6, 6, 6));
 	
 
-	printf("\nSize of event queue AFTER PUSH = %d", EventQueue.currentSize);
-	printf("\nCapacity of event queue AFTER PUSH = %d", EventQueue.capacity);
-	printf("\n\nUNSORTED QUEUE:");
-	printQueue(EventQueue);
-	sort(&EventQueue);
-	Event previouslyPopped = pop(&EventQueue);
-	printf("JOB # POPPED: %d", previouslyPopped.jobSequenceNumber);
-	Event nextPopped = pop(&EventQueue);
-	printf("JOB # POPPED: %d", nextPopped.jobSequenceNumber);
-	Event nextnextPopped = pop(&EventQueue);
-	printf("JOB # POPPED: %d", nextnextPopped.jobSequenceNumber);
-	printf("\n\nSORTED QUEUE:");
-	printQueue(EventQueue);
-
-
-	printf("\nSize of event queue AFTER POP = %d", EventQueue.currentSize);
-	printf("\nIs the queue empty AFTER POP? %d", isEmpty(&EventQueue));
-	// sort(&EventQueue);
+	// printf("\nSize of event queue AFTER PUSH = %d", EventQueue.currentSize);
+	// printf("\nCapacity of event queue AFTER PUSH = %d", EventQueue.capacity);
+	// printf("\n\nUNSORTED QUEUE:");
 	// printQueue(EventQueue);
-	printf("\n\nDESTROY THE QUEUE\n");
-	destroy(&EventQueue);
-	printf("Is the queue empty AFTER DESTROY? %d", isEmpty(&EventQueue));
-	printQueue(EventQueue);
+	// sort(&EventQueue);
+	// Event previouslyPopped = pop(&EventQueue);
+	// printf("JOB # POPPED: %d", previouslyPopped.jobSequenceNumber);
+	// printf("\n\nSORTED QUEUE:");
+	// printQueue(EventQueue);
+
+
+	// printf("\nSize of event queue AFTER POP = %d", EventQueue.currentSize);
+	// printf("\nIs the queue empty AFTER POP? %d", isEmpty(&EventQueue));
+	// // sort(&EventQueue);
+	// // printQueue(EventQueue);
+	// printf("\n\nDESTROY THE QUEUE\n");
+	// destroy(&EventQueue);
+	// printf("Is the queue empty AFTER DESTROY? %d", isEmpty(&EventQueue));
+	// printQueue(EventQueue);
 
 
 
