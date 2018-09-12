@@ -27,36 +27,33 @@
         DISK2_MAX;
     };
     // define an Event type as a struct with certain data to be used
-    typedef struct { // better to use typedef to define Event struct for readability?
-        // members of the event type
-        // struct Event *next;
-        double time; // time is how priority is determined in EventQueue
-        int jobSequenceNumber; // how is this used in relation to time etc?
-        int eventType; // an int because we'll want a switch case that prints the events type based off the number of event taking place
-        //struct Event *event; // the event itself
-    } Event; //variables of the Event type
+    typedef struct {
+        double time;
+        int jobSequenceNumber;
+        int eventType;
+    } Event; 
     // define a Queue struct with certain data to be used
     typedef struct {
-        // Event *front; // used to keep track of each queues elements 
-        // Event *rear;
-        int rear, front, currentSize, capacity; // rear and front will keep track of rear and front indices
-        Event *eventList;//list of events in queue (AKA an array of Event structs)
-    } Queue; // Queue types to use & pointer to base Queue struct
+        int front, currentSize, capacity; // front will hold index of whatever event is at the front of the queue, currentSize is the current number of events in a queue, and capacity is the max number of elements a queue can hold before being dynamically reallocated
+        Event *eventList; //list of events in queue (AKA an array of Event structs)
+    } Queue;
 
     // DES function protoypes
-    struct config populateConfigStruct(char *file);
-    double generateRandomNumber(struct config cfg, int min, int max);
+    struct config populateConfigStruct(char *file); // populates config struct by reading in config file and converting its values then storing them in config's members, also writes the config file to the log file
+    void process_CPU(struct config *cfg, Queue *eventQueue, Queue *cpuQueue, int cpu_status, Event e, double currentTime); // processes CPU event
+    void process_Disk(Queue *disk1Queue, Queue *disk2Queue, Event diskEvent); // processes Disk event
+    int generateRandomNumber(struct config *cfg, int min, int max); // generates a random number number between min and max
+    int prob(struct config cfg); // not sure how this will work exactly yet
     Queue initializeQueue(int capacity);
-    //reallocateQueue(Queue *q, int capacity);
-    void printQueue(Queue q);
-    void printEvent(Event e);
-    void destroy(Queue *q);
-    void destroyEvent(Event *e);
-    Queue sort(Queue *q);
-    Event create_event(int eventType, int jobSequenceNumber, double ttime);
-    int isEmpty(Queue *q);
-    int isFull(Queue *q);
-    void push(Queue *q, Event e);
-    Event pop(Queue *q);
+    void printQueue(Queue *q); // to test
+    void printEvent(Event *e); // to test
+    void destroy(Queue *q); // to free queue space
+    Queue sort(Queue *q); // to sort queue's events by time
+    Event create_event(int eventType, int jobSequenceNumber, double ttime); // to create an event
+    void destroyEvent(Event *e); // to destroy just an event, don't really need this
+    int isEmpty(Queue *q); // checks if queue is empty
+    int isFull(Queue *q); // checks if a queue is full
+    void push(Queue *q, Event *e); // pushes an event to the queue
+    Event pop(Queue *q); // pops an event from the front of the queue
 
 #endif
