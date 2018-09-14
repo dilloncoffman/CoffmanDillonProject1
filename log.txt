@@ -1,6 +1,6 @@
 1 SEED
 0 INIT_TIME
-300000 FIN_TIME
+10000 FIN_TIME
 10 ARRIVE_MIN
 500 ARRIVE_MAX
 0.2 QUIT_PROB
@@ -10,3 +10,177 @@
 100 DISK1_MAX
 10 DISK2_MIN
 100 DISK2_MAX
+At time 0, Job 1 entered CPU.
+At time 81, Job 1 finishes at CPU.
+At time 81, Job 1 finishes at CPU.
+At time 81, Job 1 arrives at Disk 2.
+At time 81, Job 1 entered Disk 2.
+At time 162, Job 1 finishes at Disk 2.
+At time 409, Job 1 arrived.
+At time 409, Job 1 entered CPU.
+At time 490, Job 1 finishes at CPU.
+At time 490, Job 1 finishes at CPU.
+At time 490, Job 1 arrives at Disk 2.
+At time 490, Job 1 entered Disk 2.
+At time 571, Job 1 finishes at Disk 2.
+At time 818, Job 2 arrived.
+At time 818, Job 2 entered CPU.
+At time 899, Job 2 finishes at CPU.
+At time 899, Job 2 finishes at CPU.
+At time 899, Job 2 arrives at Disk 2.
+At time 899, Job 2 entered Disk 2.
+At time 980, Job 2 finishes at Disk 2.
+At time 1227, Job 3 arrived.
+At time 1227, Job 3 entered CPU.
+At time 1308, Job 3 finishes at CPU.
+At time 1308, Job 3 finishes at CPU.
+At time 1308, Job 3 arrives at Disk 2.
+At time 1308, Job 3 entered Disk 2.
+At time 1389, Job 3 finishes at Disk 2.
+At time 1636, Job 4 arrived.
+At time 1636, Job 4 entered CPU.
+At time 1717, Job 4 finishes at CPU.
+At time 1717, Job 4 finishes at CPU.
+At time 1717, Job 4 arrives at Disk 2.
+At time 1717, Job 4 entered Disk 2.
+At time 1798, Job 4 finishes at Disk 2.
+At time 2045, Job 5 arrived.
+At time 2045, Job 5 entered CPU.
+At time 2126, Job 5 finishes at CPU.
+At time 2126, Job 5 finishes at CPU.
+At time 2126, Job 5 arrives at Disk 2.
+At time 2126, Job 5 entered Disk 2.
+At time 2207, Job 5 finishes at Disk 2.
+At time 2454, Job 6 arrived.
+At time 2454, Job 6 entered CPU.
+At time 2535, Job 6 finishes at CPU.
+At time 2535, Job 6 finishes at CPU.
+At time 2535, Job 6 arrives at Disk 2.
+At time 2535, Job 6 entered Disk 2.
+At time 2616, Job 6 finishes at Disk 2.
+At time 2863, Job 7 arrived.
+At time 2863, Job 7 entered CPU.
+At time 2944, Job 7 finishes at CPU.
+At time 2944, Job 7 finishes at CPU.
+At time 2944, Job 7 arrives at Disk 2.
+At time 2944, Job 7 entered Disk 2.
+At time 3025, Job 7 finishes at Disk 2.
+At time 3272, Job 8 arrived.
+At time 3272, Job 8 entered CPU.
+At time 3353, Job 8 finishes at CPU.
+At time 3353, Job 8 finishes at CPU.
+At time 3353, Job 8 arrives at Disk 2.
+At time 3353, Job 8 entered Disk 2.
+At time 3434, Job 8 finishes at Disk 2.
+At time 3681, Job 9 arrived.
+At time 3681, Job 9 entered CPU.
+At time 3762, Job 9 finishes at CPU.
+At time 3762, Job 9 finishes at CPU.
+At time 3762, Job 9 arrives at Disk 2.
+At time 3762, Job 9 entered Disk 2.
+At time 3843, Job 9 finishes at Disk 2.
+At time 4090, Job 10 arrived.
+At time 4090, Job 10 entered CPU.
+At time 4171, Job 10 finishes at CPU.
+At time 4171, Job 10 finishes at CPU.
+At time 4171, Job 10 arrives at Disk 2.
+At time 4171, Job 10 entered Disk 2.
+At time 4252, Job 10 finishes at Disk 2.
+At time 4499, Job 11 arrived.
+At time 4499, Job 11 entered CPU.
+At time 4580, Job 11 finishes at CPU.
+At time 4580, Job 11 finishes at CPU.
+At time 4580, Job 11 arrives at Disk 2.
+At time 4580, Job 11 entered Disk 2.
+At time 4661, Job 11 finishes at Disk 2.
+At time 4908, Job 12 arrived.
+At time 4908, Job 12 entered CPU.
+At time 4989, Job 12 finishes at CPU.
+At time 4989, Job 12 finishes at CPU.
+At time 4989, Job 12 arrives at Disk 2.
+At time 4989, Job 12 entered Disk 2.
+At time 5070, Job 12 finishes at Disk 2.
+At time 5317, Job 13 arrived.
+At time 5317, Job 13 entered CPU.
+At time 5398, Job 13 finishes at CPU.
+At time 5398, Job 13 finishes at CPU.
+At time 5398, Job 13 arrives at Disk 2.
+At time 5398, Job 13 entered Disk 2.
+At time 5479, Job 13 finishes at Disk 2.
+At time 5726, Job 14 arrived.
+At time 5726, Job 14 entered CPU.
+At time 5807, Job 14 finishes at CPU.
+At time 5807, Job 14 finishes at CPU.
+At time 5807, Job 14 arrives at Disk 2.
+At time 5807, Job 14 entered Disk 2.
+At time 5888, Job 14 finishes at Disk 2.
+At time 6135, Job 15 arrived.
+At time 6135, Job 15 entered CPU.
+At time 6216, Job 15 finishes at CPU.
+At time 6216, Job 15 finishes at CPU.
+At time 6216, Job 15 arrives at Disk 2.
+At time 6216, Job 15 entered Disk 2.
+At time 6297, Job 15 finishes at Disk 2.
+At time 6544, Job 16 arrived.
+At time 6544, Job 16 entered CPU.
+At time 6625, Job 16 finishes at CPU.
+At time 6625, Job 16 finishes at CPU.
+At time 6625, Job 16 arrives at Disk 2.
+At time 6625, Job 16 entered Disk 2.
+At time 6706, Job 16 finishes at Disk 2.
+At time 6953, Job 17 arrived.
+At time 6953, Job 17 entered CPU.
+At time 7034, Job 17 finishes at CPU.
+At time 7034, Job 17 finishes at CPU.
+At time 7034, Job 17 arrives at Disk 2.
+At time 7034, Job 17 entered Disk 2.
+At time 7115, Job 17 finishes at Disk 2.
+At time 7362, Job 18 arrived.
+At time 7362, Job 18 entered CPU.
+At time 7443, Job 18 finishes at CPU.
+At time 7443, Job 18 finishes at CPU.
+At time 7443, Job 18 arrives at Disk 2.
+At time 7443, Job 18 entered Disk 2.
+At time 7524, Job 18 finishes at Disk 2.
+At time 7771, Job 19 arrived.
+At time 7771, Job 19 entered CPU.
+At time 7852, Job 19 finishes at CPU.
+At time 7852, Job 19 finishes at CPU.
+At time 7852, Job 19 arrives at Disk 2.
+At time 7852, Job 19 entered Disk 2.
+At time 7933, Job 19 finishes at Disk 2.
+At time 8180, Job 20 arrived.
+At time 8180, Job 20 entered CPU.
+At time 8261, Job 20 finishes at CPU.
+At time 8261, Job 20 finishes at CPU.
+At time 8261, Job 20 arrives at Disk 2.
+At time 8261, Job 20 entered Disk 2.
+At time 8342, Job 20 finishes at Disk 2.
+At time 8589, Job 21 arrived.
+At time 8589, Job 21 entered CPU.
+At time 8670, Job 21 finishes at CPU.
+At time 8670, Job 21 finishes at CPU.
+At time 8670, Job 21 arrives at Disk 2.
+At time 8670, Job 21 entered Disk 2.
+At time 8751, Job 21 finishes at Disk 2.
+At time 8998, Job 22 arrived.
+At time 8998, Job 22 entered CPU.
+At time 9079, Job 22 finishes at CPU.
+At time 9079, Job 22 finishes at CPU.
+At time 9079, Job 22 arrives at Disk 2.
+At time 9079, Job 22 entered Disk 2.
+At time 9160, Job 22 finishes at Disk 2.
+At time 9407, Job 23 arrived.
+At time 9407, Job 23 entered CPU.
+At time 9488, Job 23 finishes at CPU.
+At time 9488, Job 23 finishes at CPU.
+At time 9488, Job 23 arrives at Disk 2.
+At time 9488, Job 23 entered Disk 2.
+At time 9569, Job 23 finishes at Disk 2.
+At time 9816, Job 24 arrived.
+At time 9816, Job 24 entered CPU.
+At time 9897, Job 24 finishes at CPU.
+At time 9897, Job 24 finishes at CPU.
+At time 9897, Job 24 arrives at Disk 2.
+At time 9897, Job 24 entered Disk 2.
+At time 9978, Job 24 finishes at Disk 2.

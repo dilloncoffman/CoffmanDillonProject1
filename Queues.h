@@ -28,7 +28,7 @@
     };
     // define an Event type as a struct with certain data to be used
     typedef struct {
-        double time;
+        float time;
         int jobSequenceNumber;
         int eventType;
     } Event; 
@@ -40,16 +40,15 @@
 
     // DES function protoypes
     struct config populateConfigStruct(char *file); // populates config struct by reading in config file and converting its values then storing them in config's members, also writes the config file to the log file
-    void process_CPU(struct config *cfg, Queue *eventQueue, Queue *cpuQueue, int cpu_status, Event e, double currentTime); // processes CPU event
-    void process_Disk(Queue *disk1Queue, Queue *disk2Queue, Event diskEvent); // processes Disk event
-    int generateRandomNumber(struct config *cfg, int min, int max); // generates a random number number between min and max
-    int prob(struct config cfg); // not sure how this will work exactly yet
+    void process_CPU(struct config *cfg, Queue *eventQueue, Queue *cpuQueue, int cpu_status, Event e, float currentTime, FILE *logFile_ptr); // processes CPU event
+    void process_Disk(struct config *cfg, Queue *disk1Queue, Queue *disk2Queue, Queue *eventQueue, Queue *cpuQueue, Event diskEvent, int disk1_status, int disk2_status, float currentTime, FILE *logFile_ptr); // processes Disk event
+    float generateRandomNumber(struct config *cfg, int min, int max); // generates a random number number between min and max
     Queue initializeQueue(int capacity);
     void printQueue(Queue *q); // to test
     void printEvent(Event *e); // to test
     void destroy(Queue *q); // to free queue space
     Queue sort(Queue *q); // to sort queue's events by time
-    Event create_event(int eventType, int jobSequenceNumber, double ttime); // to create an event
+    Event create_event(int eventType, int jobSequenceNumber, float ttime); // to create an event
     void destroyEvent(Event *e); // to destroy just an event, don't really need this
     int isEmpty(Queue *q); // checks if queue is empty
     int isFull(Queue *q); // checks if a queue is full

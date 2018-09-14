@@ -12,6 +12,7 @@ Queue initializeQueue(int capacity) {
 	newQ.capacity = capacity;
 	newQ.currentSize = 0;
 	newQ.front = 0; // points to first index in queue
+	//newQ.rear = capacity - 1; // points to most recent item in queue
 	return newQ;
 }
 
@@ -28,7 +29,7 @@ void destroy(Queue *q) {
 }
 
 // Creates an event (OR could just use the Event e = {memberdata, memberdata, memberdata} notation too)
-Event create_event(int eventType, int jobSequenceNumber, double ttime) {
+Event create_event(int eventType, int jobSequenceNumber, float ttime) {
 	Event newEvent;
 	newEvent.eventType = eventType; 
 	newEvent.jobSequenceNumber = jobSequenceNumber;
@@ -110,11 +111,10 @@ void push(Queue *q, Event *e) {
         q->eventList = temp;
         free(temp2); //free old eventList
 	} else { // queue is not full, push event to queue
-		printf("\nDID IT\n");
 		q->eventList[q->currentSize] = *e;
 		q->currentSize += 1; // increment size of queue by 1, since event successfully pushed to queue
 		q->front += 1; // increment the counter which keeps track of what is at the front of the queue
-		printf("Pushed event to queue successfully.\n");
+		//printf("Pushed event to queue successfully.\n");
 	}  
 	
 }
@@ -163,7 +163,7 @@ Event pop(Queue *q) {
 		Event e = q->eventList[(q->front - 1)];
 		q->front -= 1; // decrement front index to keep track of front of queue
 		q->currentSize -= 1; // decrement the size of the queue since you've popped off an item
-		printf("\nPopped from queue successfully.\n");
+		//printf("\nPopped from queue successfully.\n");
 		return e;
 	}
 }
