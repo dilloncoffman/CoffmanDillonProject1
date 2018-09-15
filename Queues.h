@@ -54,5 +54,6 @@
     int isFull(Queue *q); // checks if a queue is full
     void push(Queue *q, Event *e); // pushes an event to the queue
     Event pop(Queue *q); // pops an event from the front of the queue
+    Event popEventQ(Queue *q, int ttime);
 
 #endif

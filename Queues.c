@@ -12,7 +12,6 @@ Queue initializeQueue(int capacity) {
 	newQ.capacity = capacity;
 	newQ.currentSize = 0;
 	newQ.front = 0; // points to first index in queue
-	//newQ.rear = capacity - 1; // points to most recent item in queue
 	return newQ;
 }
 
