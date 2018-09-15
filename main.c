@@ -40,7 +40,7 @@ int main() {
 	printf("DISK2_MIN: %.0f\n", configStruct.DISK2_MIN);
 	printf("DISK2_MAX: %.0f\n", configStruct.DISK2_MAX);
 
-	FILE *logFile_ptr = fopen("log.txt", "a"); // opens file for appending, file pointer moved to end to avoid overwriting config value already written
+	FILE *logFile_ptr = fopen("log.txt", "a"); // opens file for appending, file pointer moved to end to avoid overwriting config values already written using populateConfigStruct
 
 	// initialize the Queues
 	Queue EventQueue = initializeQueue(0);
@@ -67,92 +67,101 @@ int main() {
 	configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
 
 	//  While the EventQueue is not empty AND the currentTime is less than FIN_TIME, process events
-	while(!(isEmpty(&EventQueue)) && (currentTime < configStruct.FIN_TIME)) {
-		configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX); // generates a new seed to be used for each iteration
+	while(!(isEmpty(&EventQueue)) && (currentTime <= configStruct.FIN_TIME)) { // currentTime <= because need to run SIM_END event, which logs "Simulation finished." to log file
+		configStruct.SEED = generateRandomNumber(&configStruct, 1, 1000); // generates a new seed to be used for each iteration
 		// every iteration of the while check to see if the currentTime is equal to the time the next event should arrive in the int above, if it is equal then create the nextEvent and add it to CpuQueue, then find the nextTime (global var)
-		//Event currentEvent;
-		if (currentTime == nextTime) { // if currentTime is equal to the time the time nextEvent should arrive
-			// create new event, have global int initialized to random int between arrive min and arrive max
-			jobNumber += 1; // increment job number for nextEvent
-			Event nextEvent = create_event(ARRIVAL, jobNumber,  currentTime);
-			fprintf(logFile_ptr, "\nAt time %.0f, Job %d arrived.", nextEvent.time, nextEvent.jobSequenceNumber); // log event creation
-			push(&CPUQueue, &nextEvent); // push to cpu queue
-			nextTime =  ((int) generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX)) + currentTime; //update nextTime
+		if ((currentTime == nextTime) && isCpuEmpty == 1) { // if currentTime is equal to the time the time nextEvent should arrive
+				// create new event, have global int initialized to random int between arrive min and arrive max
+				jobNumber += 1; // increment job number for nextEvent
+				Event nextEvent = create_event(ARRIVAL, jobNumber,  currentTime);
+				fprintf(logFile_ptr, "\nAt time %d, Job %d arrives.", (int)nextEvent.time, nextEvent.jobSequenceNumber);
+				//printf("\nNEXT EVENT CREATED\n");
+				//fprintf(logFile_ptr, "\nAt time %.0f, Job %d arrived.", nextEvent.time, nextEvent.jobSequenceNumber); // log event creation
+				push(&CPUQueue, &nextEvent); // push to cpu queue
+				nextTime =  ((int) generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX)) + currentTime; //update nextTime
 		}
-
 		// go through eventQ, see if a job is scheduled to finish at the current time, if so remove them from event queue and process them, determine if it exits or creates disk event, don't forget to set isCpuEmpty to 
 		int i = 0;
-		for (i = 0; i < EventQueue.currentSize; i++) { // go through EventQueue
-            if (EventQueue.eventList[i].time == currentTime) { // if any events finish time is equal to the current time
-				EventQueue.eventList[i] = pop(&EventQueue); // pop that finish event from EventQueue
-				switch(EventQueue.eventList[i].eventType) { // depending on events finish state, handle the event
-					case CPU_FINISH:
-						printf("\ncpu finish\n");
-						configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
-						// check QUIT PROB
-						if ((generateRandomNumber(&configStruct, 0, 1)) <= (configStruct.QUIT_PROB)) { // probability event exits system
-							fprintf(logFile_ptr, "\nAt time %d, Job %d exits the system.", currentTime, EventQueue.eventList[i].jobSequenceNumber);
-							printf("\nEvent exits system\n");
-						} else { // check the disk queue sizes, create disk event, push it to appropriate queue
-							fprintf(logFile_ptr, "\nAt time %d, Job %d finishes at CPU.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event finishes at CPU
-							// diskEvent will be currentEvents fields, except change the eventType to Disk arrival
+		if(!(executionInCPU == 0)) { // so long as it's not the first execution in the CPU, avoid popping off EventQueue, otherwise you will get a SIM_END event
+			for (i = 0; i <= EventQueue.currentSize; i++) { // go through EventQueue, i less than or equal to EventQueue.currentSize, otherwise SIM_END event will never log to file
+				if ((EventQueue.eventList[i].time) == (currentTime)) { // if any event's finish time is equal to the current time
+					EventQueue.eventList[i] = pop(&EventQueue); // pop that finish event from EventQueue
+					switch (EventQueue.eventList[i].eventType) { // depending on event's finish state, handle the event
+						case CPU_FINISH:
+							printf("\ncpu finish\n");
 							configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
-							Event diskEvent = EventQueue.eventList[i];
-							if (Disk1Queue.currentSize == Disk2Queue.currentSize) { // if the disk queues are equal, randomly determine which one to use
-								if (generateRandomNumber(&configStruct, 0, 1) < (0.4)) { // if random number is <= 0.4, use disk 1, otherwise use disk2
-									printf("\nPushed disk event to disk 1 Queue..\n");
-									diskEvent.eventType = DISK1_ARRIVAL;
-									fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 1.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 1
-									push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
-								} else {
-									printf("\nPushed disk event to disk 2 Queue..\n");
-									diskEvent.eventType = DISK2_ARRIVAL;
-									fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 2.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 2
-									push(&Disk2Queue, &diskEvent);
-								}
-							} else { // the disk queues are not equal in size, so use the smaller one
-								// check the size of each disk queue, push diskEvent to shorter one
-								if (Disk1Queue.currentSize < Disk2Queue.currentSize) {
-									printf("\nPushed disk event to disk 1 Queue..\n");
-									diskEvent.eventType = DISK1_ARRIVAL;
-									fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 1.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 1
-									push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
-								} 
-								if (Disk2Queue.currentSize < Disk1Queue.currentSize) {
-									// push diskEvent to disk2Queue
-									printf("\nPushed disk event to disk 2 Queue..\n");
-									diskEvent.eventType = DISK2_ARRIVAL;
-									fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 2.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 2
-									push(&Disk2Queue, &diskEvent);
+							// check QUIT PROB
+							if ((generateRandomNumber(&configStruct, 0, 1)) <= (configStruct.QUIT_PROB)) { // probability event exits system
+								fprintf(logFile_ptr, "\nAt time %d, Job %d exits the system.", currentTime, EventQueue.eventList[i].jobSequenceNumber);
+								printf("\nEvent exits system\n");
+							} else { // check the disk queue sizes, create disk event, push it to appropriate queue
+								fprintf(logFile_ptr, "\nAt time %d, Job %d finishes at CPU.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event finishes at CPU
+								// diskEvent will be currentEvents fields, except change the eventType to Disk arrival
+								configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+								Event diskEvent = create_event(EventQueue.eventList[i].eventType, EventQueue.eventList[i].jobSequenceNumber, EventQueue.eventList[i].time);
+								
+								if (Disk1Queue.currentSize == Disk2Queue.currentSize) { // if the disk queues are equal, randomly determine which one to use
+									if (generateRandomNumber(&configStruct, 0, 1) < (0.25)) { // if random number is <= 0.4, use disk 1, otherwise use disk2
+										printf("\nPushed disk event to disk 1 Queue..\n");
+										diskEvent.eventType = DISK1_ARRIVAL;
+										fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 1.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 1
+										push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
+									} else {
+										printf("\nPushed disk event to disk 2 Queue..\n");
+										diskEvent.eventType = DISK2_ARRIVAL;
+										fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 2.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 2
+										push(&Disk2Queue, &diskEvent);
+									}
+								} else { // the disk queues are not equal in size, so use the smaller one
+									// check the size of each disk queue, push diskEvent to shorter one
+									if (Disk1Queue.currentSize < Disk2Queue.currentSize) {
+										printf("\nPushed disk event to disk 1 Queue..\n");
+										diskEvent.eventType = DISK1_ARRIVAL;
+										fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 1.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 1
+										push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
+									} 
+									if (Disk2Queue.currentSize < Disk1Queue.currentSize) {
+										// push diskEvent to disk2Queue
+										printf("\nPushed disk event to disk 2 Queue..\n");
+										diskEvent.eventType = DISK2_ARRIVAL;
+										fprintf(logFile_ptr, "\nAt time %d, Job %d arrives at Disk 2.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event arrives at disk 2
+										push(&Disk2Queue, &diskEvent);
+									}
 								}
 							}
-						}
-						// set the isCPUEmpty 1 CPU
-						isCpuEmpty = 1;
-						break;
-					case DISK1_FINISH:
-						// update state to ARRIVAL since it will go to the CPUQueue
-
-						// print to log file, done in disk 1
-						// send right back to CPU queue
-						// set the isDiskEmpty 1
-						isDisk1Empty = 1;
-						break;
-					case DISK2_FINISH:
-						// update state to ARRIVAL since it will go to the CPUQueue
-						// print to log file, done in disk 1
-						// send right back to CPU queue
-						// set the isDiskEmpty 1
-						isDisk2Empty = 1;
-						break;
-					case SIM_END:
-						break;
-						// print to log file that simulation finished
-						// exit or return 0
+							// set the isCPUEmpty 1 CPU
+							isCpuEmpty = 1;
+							break;
+						case DISK1_FINISH:
+							// update state to ARRIVAL since it will go to the CPUQueue
+							EventQueue.eventList[i].eventType = ARRIVAL;
+							// print to log file, done in disk 1
+							fprintf(logFile_ptr, "\nAt time %d, Job %d finishes at Disk 1.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event finishes at Disk 1
+							// send right back to CPU queue
+							push(&CPUQueue, &EventQueue.eventList[i]);
+							// set the isDiskEmpty 1
+							isDisk1Empty = 1;
+							break;
+						case DISK2_FINISH:
+							// update state to ARRIVAL since it will go to the CPUQueue
+							EventQueue.eventList[i].eventType = ARRIVAL;
+							// print to log file, done in disk 1
+							fprintf(logFile_ptr, "\nAt time %d, Job %d finishes at Disk 2.", currentTime, EventQueue.eventList[i].jobSequenceNumber); // event finishes at Disk 1
+							// send right back to CPU queue
+							push(&CPUQueue, &EventQueue.eventList[i]);
+							// set the isDiskEmpty 1
+							isDisk2Empty = 1;
+							break;
+						case SIM_END:
+							fprintf(logFile_ptr, "\nSimulation finished. :)");
+							break;
+							// print to log file that simulation finished
+							// exit or return 0
+					}
 				}
 			}
-        }
-
+		}
+		
 
 		configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX); 
 		
@@ -160,18 +169,20 @@ int main() {
 			if (CPUQueue.currentSize >= 1) { // if CPUQueue's size is greater than or equal to 1
 				// PROCESS EVENT FROM CPUQUEUE
 				Event currentEvent = pop(&CPUQueue); // get current event from CPU Queue
-				fprintf(logFile_ptr, "\nAt time %.0f, Job %d entered CPU.", currentEvent.time, currentEvent.jobSequenceNumber); // log event execution in CPU
+				fprintf(logFile_ptr, "\nAt time %.0f, Job %d enters the CPU.", currentEvent.time, currentEvent.jobSequenceNumber); // log event execution in CPU
 				isCpuEmpty = 0; // set CPU state to busy AKA event is now executing in CPU
 				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX))) + currentTime; // set currentEvent's time to finishTime
 				currentEvent.eventType = CPU_FINISH; // update event's state to currently executing in CPU
 				
 				//Event job_fin = create_event(CPU_FINISH, currentEvent.jobSequenceNumber, generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX) + currentTime); // create a CPU_FINISH event at CPU with random time plus the currentTime
-				fprintf(logFile_ptr, "\nAt time %.0f, Job %d finishes at CPU.", currentEvent.time, currentEvent.jobSequenceNumber); //log event
+				//fprintf(logFile_ptr, "\nAt time %.0f, Job %d finishes at CPU.", currentEvent.time, currentEvent.jobSequenceNumber); //log event
 				push(&EventQueue, &currentEvent); //push that event to Event Queue
 				printEvent(&currentEvent);
 				sort(&EventQueue); // sort to maintain priority by shortest event time
 				executionInCPU += 1; // keeps track of how many executions in CPU
 			}
+		} else {
+			
 		}
 
 			// Disk 1 component
@@ -185,7 +196,7 @@ int main() {
 					currentEvent.eventType = DISK1_FINISH; // update event's state to currently executing in CPU
 
 					//Event job_fin = create_event(CPU_FINISH, currentEvent.jobSequenceNumber, generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX) + currentTime); // create a CPU_FINISH event at CPU with random time plus the currentTime
-					fprintf(logFile_ptr, "\nAt time %.0f, Job %d finishes at Disk 1.", currentEvent.time, currentEvent.jobSequenceNumber); //log event
+					//fprintf(logFile_ptr, "\nAt time %.0f, Job %d finishes at Disk 1.", currentEvent.time, currentEvent.jobSequenceNumber); //log event
 					push(&EventQueue, &currentEvent); //push that event to Event Queue
 					printEvent(&currentEvent);
 					sort(&EventQueue); // sort to maintain priority by shortest event time
@@ -203,7 +214,7 @@ int main() {
 					currentEvent.eventType = DISK2_FINISH; // update event's state to currently executing in CPU
 
 					//Event job_fin = create_event(CPU_FINISH, currentEvent.jobSequenceNumber, generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX) + currentTime); // create a CPU_FINISH event at CPU with random time plus the currentTime
-					fprintf(logFile_ptr, "\nAt time %.0f, Job %d finishes at Disk 2.", currentEvent.time, currentEvent.jobSequenceNumber); //log event
+					//fprintf(logFile_ptr, "\nAt time %.0f, Job %d finishes at Disk 2.", currentEvent.time, currentEvent.jobSequenceNumber); //log event
 					push(&EventQueue, &currentEvent); //push that event to Event Queue
 					printEvent(&currentEvent);
 					sort(&EventQueue); // sort to maintain priority by shortest event time
@@ -211,7 +222,11 @@ int main() {
 				}
 			}
 
+
 			currentTime += 1; // increment time by one for each execution of loop
+
+
+
 			//	************* PROBABILITY EXITS OR CREATE DISK EVENT d****************/
 			// configStruct.SEED = generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX);
 			// Event finishEvent = pop(&EventQueue);
@@ -345,7 +360,7 @@ int main() {
 float generateRandomNumber(struct config *cfg, int min, int max) {
 	srand(time(NULL)); // seed random number generator
 	float randomNumber = ((float)rand()/(float)(RAND_MAX)) * max;
-	return randomNumber;
+	return (float)randomNumber;
 }
 
 // void process_CPU(struct config *cfg, Queue *eventQueue, Queue *cpuQueue, int cpu_status, Event currentEvent, float currentTime, FILE *logFile_ptr) {
