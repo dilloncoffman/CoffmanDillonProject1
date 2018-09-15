@@ -103,12 +103,10 @@ int main() {
 										printf("\nPushed disk event to disk 1 Queue..\n");
 										diskEvent.eventType = DISK1_ARRIVAL;
 										push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
-										break;
 									} else {
 										printf("\nPushed disk event to disk 2 Queue..\n");
 										diskEvent.eventType = DISK2_ARRIVAL;
 										push(&Disk2Queue, &diskEvent);
-										break;
 									}
 								} else { // the disk queues are not equal in size, so use the smaller one
 									// check the size of each disk queue, push diskEvent to shorter one
@@ -116,14 +114,12 @@ int main() {
 										printf("\nPushed disk event to disk 1 Queue..\n");
 										diskEvent.eventType = DISK1_ARRIVAL;
 										push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
-										break;
 									} 
 									if (Disk2Queue.currentSize < Disk1Queue.currentSize) {
 										// push diskEvent to disk2Queue
 										printf("\nPushed disk event to disk 2 Queue..\n");
 										diskEvent.eventType = DISK2_ARRIVAL;
 										push(&Disk2Queue, &diskEvent);
-										break;
 									}
 								}
 							}
