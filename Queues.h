@@ -42,7 +42,7 @@
     struct config populateConfigStruct(char *file); // populates config struct by reading in config file and converting its values then storing them in config's members, also writes the config file to the log file
     void process_CPU(struct config *cfg, Queue *eventQueue, Queue *cpuQueue, int cpu_status, Event e, float currentTime, FILE *logFile_ptr); // processes CPU event
     void process_Disk(struct config *cfg, Queue *disk1Queue, Queue *disk2Queue, Queue *eventQueue, Queue *cpuQueue, Event diskEvent, int disk1_status, int disk2_status, float currentTime, FILE *logFile_ptr); // processes Disk event
-    float generateRandomNumber(struct config *cfg, int min, int max); // generates a random number number between min and max
+    float generateRandomNumber(struct config *cfg, int min, int max, int *seedFactor); // generates a random number number between min and max
     Queue initializeQueue(int capacity);
     void printQueue(Queue *q); // to test
     void printEvent(Event *e); // to test

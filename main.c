@@ -17,12 +17,13 @@ int main() {
 	int executionInCPU = 0;
 	int executionInDisk1 = 0;
 	int executionInDisk2 = 0;
+	int seedFactor = 0;
 
 	struct config configStruct;
 	configStruct = populateConfigStruct("config.txt");
 
 	int currentTime = configStruct.INIT_TIME;
-	int nextTime = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	int nextTime = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor);
 
 	// Struct members from file
 	printf("SEED: %.0f\n", configStruct.SEED);
@@ -61,12 +62,12 @@ int main() {
 	// printQueue(&CPUQueue);
 	
 	//Event currentJob = pop(&EventQueue);
-	configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+	configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor);
 	int i = 0;
 
 	//  While the EventQueue is not empty AND the currentTime is less than FIN_TIME, process events
 	while(!(isEmpty(&EventQueue)) && (currentTime <= configStruct.FIN_TIME)) { // currentTime <= because need to run SIM_END event, which logs "Simulation finished." to log file
-		configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);  // generates a new seed to be used for each iteration
+		configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor);  // generates a new seed to be used for each iteration
 		// every iteration of the while check to see if the currentTime is equal to the time the next event should arrive in the int above, if it is equal then create the nextEvent and add it to CpuQueue, then find the nextTime (global var)
 		if (currentTime == nextTime) { // if currentTime is equal to the time the time nextEvent should arrive
 				// create new event, have global int initialized to random int between arrive min and arrive max
@@ -74,9 +75,8 @@ int main() {
 				Event nextEvent = create_event(ARRIVAL, jobNumber,  currentTime); // create nextEvent
 				fprintf(logFile_ptr, "\nAt time %.0f, Job %d arrives.", nextEvent.time, nextEvent.jobSequenceNumber); // log event creation ie. arrival
 				push(&CPUQueue, &nextEvent); // push the nextEvent to the CPUQueue
-				configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
-				nextTime =  ((int) generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX)); //update nextTime an event should occur
-				nextTime += currentTime; //update nextTime an event should occur
+				configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor);
+				nextTime =  ((int) generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor)) + currentTime; //update nextTime an event should occur
 		}
 		
 		// go through eventQ, see if a job is scheduled to finish at the current time, if so remove them from event queue and process them, determine if it exits or creates disk event, don't forget to set isCpuEmpty to empty if it's CPU_FINISH
@@ -87,19 +87,19 @@ int main() {
 					switch (finishEvent.eventType) { // depending on event's finish state, handle the event
 						case CPU_FINISH:
 							printf("\ncpu finish\n");
-							configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+							configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor);
 							// check QUIT PROB
-							if ((generateRandomNumber(&configStruct, 0, 1)) <= (configStruct.QUIT_PROB)) { // probability event exits system
+							if ((generateRandomNumber(&configStruct, 0, 1, &seedFactor)) < (configStruct.QUIT_PROB)) { // probability event exits system
 								fprintf(logFile_ptr, "\nAt time %d, Job %d exits the system.", currentTime, finishEvent.jobSequenceNumber);
 								printf("\nEvent exits system\n");
 							} else { // check the disk queue sizes, create disk event, push it to appropriate queue
 								fprintf(logFile_ptr, "\nAt time %d, Job %d finishes at CPU.", currentTime, finishEvent.jobSequenceNumber); // event finishes at CPU
 								// diskEvent will be currentEvents fields, except change the eventType to Disk arrival
-								configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX);
+								configStruct.SEED = generateRandomNumber(&configStruct, configStruct.ARRIVE_MIN, configStruct.ARRIVE_MAX, &seedFactor);
 								Event diskEvent = create_event(finishEvent.eventType, finishEvent.jobSequenceNumber, finishEvent.time);
 								
 								if (Disk1Queue.currentSize == Disk2Queue.currentSize) { // if the disk queues are equal, randomly determine which one to use
-									if (generateRandomNumber(&configStruct, 0, 1) < (0.25)) { // if random number is <= 0.4, use disk 1, otherwise use disk2
+									if (generateRandomNumber(&configStruct, 0, 1, &seedFactor) < (0.25)) { // if random number is <= 0.4, use disk 1, otherwise use disk2
 										printf("\nPushed disk event to disk 1 Queue..\n");
 										diskEvent.eventType = DISK1_ARRIVAL;
 										push(&Disk1Queue, &diskEvent); // push disk event to disk1Queue
@@ -148,7 +148,7 @@ int main() {
 							break;
 						case SIM_END:
 							fprintf(logFile_ptr, "\nSimulation finished. :)");
-							break;
+							exit(1);
 							// print to log file that simulation finished
 							// exit or return 0
 					}
@@ -166,7 +166,7 @@ int main() {
 				Event currentEvent = pop(&CPUQueue); // get current event from CPU Queue
 				fprintf(logFile_ptr, "\nAt time %.0f, Job %d enters the CPU.", currentEvent.time, currentEvent.jobSequenceNumber); // log event execution in CPU
 				isCpuEmpty = 0; // set CPU state to busy AKA event is now executing in CPU
-				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX))) + currentTime; // set currentEvent's time to the time it will finish in CPU
+				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX, &seedFactor))) + currentTime; // set currentEvent's time to the time it will finish in CPU
 				currentEvent.eventType = CPU_FINISH; // update event's state to currently executing in CPU, to not confuse myself I named this CPU_FINISH
 				
 				push(&EventQueue, &currentEvent); //push that event to Event Queue
@@ -183,7 +183,7 @@ int main() {
 				Event currentEvent = pop(&Disk1Queue); // get current event from Disk 1 Queue
 				fprintf(logFile_ptr, "\nAt time %.0f, Job %d entered Disk 1.", currentEvent.time, currentEvent.jobSequenceNumber); // log event execution in CPU
 				isDisk1Empty = 0; // set Disk state to busy AKA event is now executing in Disk 1
-				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.DISK1_MIN, configStruct.DISK1_MAX))) + currentTime; // set currentEvent's time to finishTime
+				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.DISK1_MIN, configStruct.DISK1_MAX, &seedFactor))) + currentTime; // set currentEvent's time to finishTime
 				currentEvent.eventType = DISK1_FINISH; // update event's state to currently executing in CPU
 
 				//Event job_fin = create_event(CPU_FINISH, currentEvent.jobSequenceNumber, generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX) + currentTime); // create a CPU_FINISH event at CPU with random time plus the currentTime
@@ -201,7 +201,7 @@ int main() {
 				Event currentEvent = pop(&Disk2Queue); // get current event from Disk 1 Queue
 				fprintf(logFile_ptr, "\nAt time %.0f, Job %d entered Disk 2.", currentEvent.time, currentEvent.jobSequenceNumber); // log event execution in CPU
 				isDisk2Empty = 0; // set Disk state to busy AKA event is now executing in Disk 1
-				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.DISK2_MIN, configStruct.DISK2_MAX))) + currentTime; // set currentEvent's time to finishTime
+				currentEvent.time = ((int)(generateRandomNumber(&configStruct, configStruct.DISK2_MIN, configStruct.DISK2_MAX, &seedFactor))) + currentTime; // set currentEvent's time to finishTime
 				currentEvent.eventType = DISK2_FINISH; // update event's state to currently executing in CPU
 
 				//Event job_fin = create_event(CPU_FINISH, currentEvent.jobSequenceNumber, generateRandomNumber(&configStruct, configStruct.CPU_MIN, configStruct.CPU_MAX) + currentTime); // create a CPU_FINISH event at CPU with random time plus the currentTime
@@ -213,6 +213,7 @@ int main() {
 			}
 		}
 		currentTime += 1; // increment time by one for each execution of loop
+		configStruct.SEED += seedFactor;
 	}
 			// free memory for all Queues allocated
 			destroy(&EventQueue);
@@ -265,9 +266,11 @@ int main() {
 		// }
 
 // generates a random number between min and max values passed in, seeds random number generator with new seed
-float generateRandomNumber(struct config *cfg, int min, int max) {
-	srand(time(NULL)); // seed random number generator
-	float randomNumber = ((float)rand()/(float)(RAND_MAX)) * max;
+float generateRandomNumber(struct config *cfg, int min, int max, int *seedFactor) {
+	*seedFactor *= rand();
+	cfg->SEED *= *seedFactor;
+	srand(time(0)); // seed random number generator
+	float randomNumber = (rand() % (max - min + 1)) + min; 
 	return (float)randomNumber;
 }
 
